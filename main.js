@@ -1,3 +1,5 @@
+// Just getting map and trees
+
 var map;
 var tanzaniaTrees = [];
 
@@ -7,7 +9,7 @@ function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 5,
     center: {lat: -6, lng: 34},
-    mapTypeId: 'satellite',
+    // mapTypeId: 'satellite',
     disableDefaultUI: true,
     zoomControl: true,
     
@@ -65,8 +67,36 @@ function placeMarkers() {
       map: map,
       label: counter.toString()
     });
-    console.log('adding marker number ' + counter)
-    console.log(marker);
+    // console.log('adding marker number ' + counter)
+    // console.log(marker);
     counter++;
   }
+}
+
+// geocode stuff
+
+function pressedEnter(event) {
+  if (event.key === "Enter") {
+    geocodeSearch("Enter pressed for ");
+  }
+} 
+
+function geocodeSearch(message) {
+  var place = document.getElementById("geocode-input").value;
+  if (message) {
+    console.log(message + place)
+  } 
+  else {
+    console.log("button clicked for " + place);
+  }
+
+  var geocoder = new google.maps.Geocoder();
+  geocoder.geocode({'address': place}, function (results, status) {
+    if (status === 'OK') {
+      console.log(results);
+      var center = results[0].geometry.viewport.getCenter();
+      map.setCenter(center);
+      console.log(center);
+    }
+  });
 }

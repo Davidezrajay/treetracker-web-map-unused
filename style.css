@@ -3,4 +3,22 @@
   width: 100%;
  }
 
+#map-container {
+  position: relative;
+}
+
+.input-box {
+  z-index: 10;
+  position: absolute;
+  padding: 2rem;
+  width: 50%;
+  top: 1rem;
+  left: 1rem;
+  background-color: rgba(245, 245, 245, .9);
+}
+
+#geocode-input {
+  width: 66%;
+  
+}
  

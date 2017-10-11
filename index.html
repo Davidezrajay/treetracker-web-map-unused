@@ -6,7 +6,17 @@
   </head>
   <body>
     <h3>My Google Maps Demo</h3>
-    <div id="map">A big map of Australia</div>
+    <div id="map-container">
+      <div class="input-box">
+        <input 
+          type="text"
+          id="geocode-input"
+          placeholder="Type a place in. It may have trees!"
+          onkeyup="pressedEnter(event)">
+        <button onclick="geocodeSearch()">Search</button>
+      </div>
+      <div id="map">A big map of Australia</div>
+    </div>
 
     <script src="main.js"> </script>
     <script async defer
