@@ -1,7 +1,12 @@
+function goToGreenStand() {
+  window.location.href = "https://treetracker-24de7.firebaseapp.com/"
+}
+
 // Just getting map and trees
 
 var map;
-var tanzaniaTrees = [];
+var allTrees = [];
+var searchedTrees = [];
 
 function initMap() {
   // var uluru = {lat: -25.363, lng: 131.044};
@@ -9,14 +14,14 @@ function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 5,
     center: {lat: -6, lng: 34},
-    // mapTypeId: 'satellite',
+    mapTypeId: 'hybrid',
     disableDefaultUI: true,
     zoomControl: true,
     
   }); 
   getTrees();
-  if (tanzaniaTrees.length > 0) {
-    console.log('initMap:' + tanzaniaTrees);
+  if (searchedTrees.length > 0) {
+    console.log('initMap:' + searchedTrees);
   }
 
   // placeMarkers();
@@ -25,6 +30,8 @@ function initMap() {
   // Therefore I put placeMarkers inside treesReq.onload and it worked! 
 }
 
+// this gets data from database (now just the trees.json file) via ajax/XMLHttpRequest api
+// it then parses the response
 function getTrees() {
   var treesUrl = './trees.json';
   // var treesUrl = 'http://treetracker.org/trees/json/all';
@@ -32,27 +39,28 @@ function getTrees() {
   treesReq.open('GET', treesUrl);
   // treesReq.responseType = 'json';
   treesReq.send();
+  
   treesReq.onload = function() {
     var treeData = treesReq.response;
-    console.log(treeData.length);
-    var trees = JSON.parse(treeData);
-
-    getTanzaniaTrees(trees); 
+    trees = JSON.parse(treeData);
+    console.log(trees.length);
+    pushDataToAllTrees(trees);
   }
 }
 
 // this gets called inside getTrees function
-function getTanzaniaTrees(data) {
+// pushes lat/lng from parsed trees.json (will be back end someday!) into array that googlemaps can use
+// 
+function pushDataToAllTrees(data) {
   
   for (var i = 0; i < data.length; i++) {
-    if ((data[i].lat > -11.5 && data[i].lat < -1) && (data[i].lon < 40 && data[i].lon > 29)) {
+    // if ((data[i].lat > -11.5 && data[i].lat < -1) && (data[i].lon < 40 && data[i].lon > 29)) {}
       var tree = {};
       tree.lat = parseFloat(data[i].lat);
       tree.lng = parseFloat(data[i].lon);
-      tanzaniaTrees.push(tree);
-    }
+      allTrees.push(tree);
   }
-  console.log('Got trees in Tanzania!', tanzaniaTrees);
+  console.log('Got all trees!', allTrees.length);
   placeMarkers();
 }
 
@@ -61,9 +69,9 @@ function getTanzaniaTrees(data) {
 function placeMarkers() {
   console.log('adding markers...')
   var counter = 1
-  for (var j = 0; j < tanzaniaTrees.length; j+= 10) {
+  for (var j = 0; j < allTrees.length; j+= 10) {
     var marker = new google.maps.Marker({
-      position: tanzaniaTrees[j],
+      position: allTrees[j],
       map: map,
       label: counter.toString()
     });
@@ -94,9 +102,9 @@ function geocodeSearch(message) {
   geocoder.geocode({'address': place}, function (results, status) {
     if (status === 'OK') {
       console.log(results);
-      var center = results[0].geometry.viewport.getCenter();
-      map.setCenter(center);
-      console.log(center);
+      var bounds = results[0].geometry.bounds;
+      map.fitBounds(bounds);
+      // console.log(center);
     }
   });
 }
