@@ -73,7 +73,8 @@ function placeMarkers() {
     var marker = new google.maps.Marker({
       position: allTrees[j],
       map: map,
-      label: counter.toString()
+      label: counter.toString(),
+      icon: "tree-marker.png"
     });
     // console.log('adding marker number ' + counter)
     // console.log(marker);
